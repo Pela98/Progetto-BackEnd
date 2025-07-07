@@ -48,7 +48,7 @@ class Profile(AbstractUser):
             null=True, blank=True,
             help_text='Fitness or training goal of the athlete.'
         )
-        # Relazione con il Coach (un altro CustomUser con role='coach')
+        # Relazione con il Coach (un altro Profile con role='coach')
         coach = models.ForeignKey(
             'self',  # Riferimento allo stesso modello CustomUser
             on_delete=models.SET_NULL,
