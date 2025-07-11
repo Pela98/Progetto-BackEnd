@@ -1,41 +1,8 @@
-<!DOCTYPE html>
-<html lang="it">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crea un Nuovo Workout</title>
-    <style>
-        body { font-family: sans-serif; margin: 20px; }
-        .form-container { max-width: 500px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        .form-container h1 { text-align: center; color: #333; margin-bottom: 20px; }
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
-        .form-group input[type="date"],
-        .form-group input[type="number"],
-        .form-group textarea {
-            width: calc(100% - 20px);
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box; /* Include padding e border nel width */
-        }
-        .form-group textarea { resize: vertical; min-height: 80px; }
-        .helptext { font-size: 0.9em; color: #666; margin-top: 5px; }
-        .errorlist { color: red; list-style-type: none; padding: 0; margin: 0 0 10px 0; }
-        button {
-            background-color: #007bff;
-            color: white;
-            padding: 10px 15px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 1em;
-            width: 100%;
-        }
-        button:hover { background-color: #0056b3; }
-    </style>
-</head>
-<body>
+{% extends 'base.html' %} {# Questa riga è la chiave per estendere base.html #}
+
+{% block title %}Crea un Nuovo Workout{% endblock %} {# Definisce il titolo specifico per questa pagina #}
+
+{% block content %}
     <div class="form-container">
         <h1>Crea un Nuovo Workout</h1>
         <form method="post">
@@ -69,5 +36,47 @@
             <button type="submit">Salva Workout</button>
         </form>
     </div>
-</body>
-</html>
+
+    {# Stili specifici per questo form. Idealmente, questi andrebbero in un file CSS separato o in un blocco extra_css nel base.html #}
+    <style>
+        .form-container {
+            max-width: 500px;
+            margin: 20px auto; /* Centra il container e gli dà un margine superiore */
+            padding: 20px;
+            background-color: #fff; /* Aggiunto sfondo bianco per distinguere */
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .form-container h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
+        .form-group input[type="date"],
+        .form-group input[type="number"],
+        .form-group textarea {
+            width: calc(100% - 20px);
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .form-group textarea { resize: vertical; min-height: 80px; }
+        .helptext { font-size: 0.9em; color: #666; margin-top: 5px; }
+        .errorlist { color: red; list-style-type: none; padding: 0; margin: 0 0 10px 0; }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1em;
+            width: 100%;
+        }
+        button:hover { background-color: #0056b3; }
+    </style>
+{% endblock %}

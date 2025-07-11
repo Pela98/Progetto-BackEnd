@@ -44,7 +44,7 @@ class GoalForm(forms.ModelForm):
     """
     class Meta:
         model = Goal
-        fields = ['name', 'description', 'target_weight', 'target_bmi']
+        fields = ['name', 'description', 'target_weight',]
         widgets = {
             'description': forms.Textarea(attrs={'rows': 3, 'maxlength':500}), # Casella di testo più grande per la descrizione
         }
@@ -52,7 +52,6 @@ class GoalForm(forms.ModelForm):
             'name': 'Nome dell\'obiettivo',
             'description': 'Descrizione dettagliata',
             'target_weight': 'Peso target (kg)',
-            'target_bmi': 'BMI target',
         }
         help_texts = {
             'target_weight': 'Il peso che desideri raggiungere in chilogrammi.',
@@ -65,20 +64,10 @@ class GoalForm(forms.ModelForm):
         return weight
 
 class FeedbackForm(forms.ModelForm):
-    """
-    Form per l'invio di un Feedback da parte degli amministratori.
-    """
     class Meta:
         model = Feedback
-        fields = [ 'comment','workout']
+        fields = ['comment'] # Il coach inserirà solo il commento
         widgets = {
+            'comment': forms.Textarea(attrs={'rows': 4, 'placeholder': 'Lascia il tuo feedback qui...'}),
+        }
 
-            'comment': forms.Textarea(attrs={'rows': 4, 'max_length':500}), # Casella di testo più grande per il commento
-        }
-        labels = {
-            'date': 'Data del feedback',
-            'comment': 'Commento',
-        }
-        help_texts = {
-            'comment': 'Scrivi il tuo feedback relativo a questo workout e obiettivo.',
-        }

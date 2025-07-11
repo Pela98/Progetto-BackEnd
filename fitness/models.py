@@ -1,44 +1,47 @@
 #fitness/models.py
 
 import datetime
+from enum import nonmember
+
 from django.core.validators import MaxLengthValidator, MaxValueValidator, MinValueValidator
 from django.db import models
 
+from django_project.settings import AUTH_USER_MODEL
 
 
 #scelte
 
 #\scelte
 
+def calculate_bmi(height, weight):
+    return weight / (height / 100) ** 2
+
 class Goal(models.Model):
     name = models.CharField(max_length=100)
-    description = models.CharField(max_length=500)
+    description = models.CharField(max_length=500, null=True, blank=True)
     target_weight = models.DecimalField(default=None, null=True, max_digits=4, decimal_places=1, validators=[MinValueValidator(5), MaxValueValidator(700)])
-    target_bmi = models.DecimalField( max_digits=4, decimal_places=1, validators=[MinValueValidator(1), MaxValueValidator(50)])
+    @property
+    def target_bmi(self):
+        if self.target_weight:
+            return calculate_bmi(self.user.height, self.target_weight)
+        return None
     # l'istanza di goal è riferita ad un user
-    user= models.OneToOneField('accounts.StandardUser', on_delete=models.CASCADE, primary_key=True, parent_link=True)
+    user= models.ForeignKey(AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='goals'  )
+    date = models.DateField(default=None, null=True)
     is_achieved = models.BooleanField(default=False)
     def __str__(self):
-        return self.name
-    # quando un goal viene completato allora viene distrutto il record e viene creato
+        return f"{self.name} - {self.user}"
+    # completamento del goal
     def achieve(self):
-        achievement = Achievement.objects.create(name=self.name, description=self.description, target_weight=self.target_weight, target_bmi=self.target_bmi, user=self.user, is_achieved=True, date=datetime.date.today())
-        achievement.save()
-        self.delete()
-        return achievement
+        self.is_achieved = True
+        self.date = datetime.date.today()
+        self.save()
     class Meta:
         verbose_name_plural = "goals"
         verbose_name = "goal"
-        ordering = ['user__username', 'name']
+        unique_together = ('name', 'user')
+        ordering = ['name']
 
-
-# quando un Goal è completato diventa un achievement
-class Achievement(Goal):
-    date = models.DateField(validators=[MinValueValidator(datetime.date.today() - datetime.timedelta(days=366)),])
-    class Meta:
-        verbose_name_plural = "achievements"
-        verbose_name = "achievement"
-        order_with_respect_to = 'date'
 def days_in_this_year():
     if datetime.date.today().year % 4 == 0:
         return 366
@@ -65,10 +68,30 @@ class Workout(models.Model):
         return self.calories_burned + self.progress_sheet.user.bmr
     def __str__(self):
         return f"{self.date} - {self.progress_sheet}"
+
     class Meta:
         verbose_name_plural = "workouts"
         verbose_name = "workout"
         ordering = ['progress_sheet', 'date']
+
+class Feedback(models.Model):
+
+    workout = models.OneToOneField('Workout', on_delete=models.CASCADE, parent_link=True, primary_key=True)
+
+    comment = models.CharField(max_length=500)
+    class Meta:
+        verbose_name_plural = "feedbacks"
+        verbose_name = "feedback"
+        ordering = ['workout']
+
+#manager delle istanze di Prog sheet
+class ProgressSheetManager(models.Manager):
+    def get_or_create_for_user_and_year(self, user, year):
+        # Questo metodo proverà a recuperare una ProgressSheet esistente
+        # per l'utente e l'anno specificati.
+        # Se non esiste, ne creerà una nuova e la restituirà.
+        sheet, created = self.get_or_create(user=user, year=year)
+        return sheet
 class ProgressSheet(models.Model):
     year = models.IntegerField(
         validators=[
@@ -77,10 +100,8 @@ class ProgressSheet(models.Model):
             ]
     )
     user = models.ForeignKey('accounts.StandardUser', on_delete=models.CASCADE)
-    @property
-    def goal(self):
-        return self.user.goal
 
+    objects = ProgressSheetManager()
     def __str__(self):
         return f"{self.year} - {self.user}"
 

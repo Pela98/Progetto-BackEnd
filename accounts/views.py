@@ -39,8 +39,6 @@ class UserProfileUpdateView(LoginRequiredMixin, UpdateView):
     success_url = reverse_lazy('home') # Reindirizza alla homepage
 
     def get_object(self, queryset=None):
-        # Assicurati che l'utente possa modificare solo il PROPRIO profilo.
-        # get_object_or_404 è utile se non dovesse trovare l'utente per qualche motivo.
         return get_object_or_404(StandardUser, pk=self.request.user.pk)
 
     def get_context_data(self, **kwargs):

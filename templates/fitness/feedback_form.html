@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <h2>{{ title }}</h2>
+        <p class="sheet-info">Per il workout del: <strong>{{ workout.date|date:"d M Y" }}</strong> ({{ workout.calories_burned }} kcals)</p>
+        
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }} {# Renderizza il form come paragrafi #}
+            <button type="submit" class="btn btn-primary">Salva Feedback</button>
+        </form>
+
+        {# Bottone per tornare alla pagina di dettaglio della ProgressSheet #}
+        <p class="back-link">
+            <a href="{% url 'progress_sheet_detail' pk=workout.progress_sheet.pk %}">Annulla e Torna alla Scheda</a>
+        </p>
+    </div>
+
+    <style>
+        /* Puoi riutilizzare molti degli stili generali già definiti nel tuo progetto */
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        h2 {
+            color: #007bff;
+            margin-bottom: 20px;
+        }
+        .sheet-info {
+            font-size: 1.1em;
+            color: #555;
+            margin-bottom: 25px;
+        }
+        form p {
+            margin-bottom: 15px;
+            text-align: left; /* Assicurati che i campi del form siano allineati a sinistra */
+        }
+        form label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+        form input[type="text"],
+        form textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box; /* Include padding e border nel width */
+        }
+        form textarea {
+            resize: vertical; /* Permette all'utente di ridimensionare verticalmente */
+            min-height: 100px;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 1em;
+            margin-top: 20px;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+        .back-link {
+            margin-top: 30px;
+        }
+        .back-link a {
+            color: #007bff;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .back-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+{% endblock %}

@@ -17,14 +17,15 @@ class StandardUserCreationForm(UserCreationForm):
        
         fields = (
             'username',
+            'first_name',
+            'last_name',
             'email',
             'height',
             'weight',
             'biogender',
             'birth_date',
             'profile_picture',
-            'first_name',
-            'last_name',
+
         )
         labels = {
             'username': 'Nome Utente',
@@ -43,6 +44,10 @@ class StandardUserCreationForm(UserCreationForm):
 
 
 class StandardUserChangeForm(UserChangeForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if 'password' in self.fields:
+         del self.fields['password']
     def clean_profile_picture(self):
         image = self.cleaned_data.get('profile_picture')
         if image:
@@ -57,20 +62,18 @@ class StandardUserChangeForm(UserChangeForm):
                 raise ValidationError("L'immagine non può superare 5MB")
             
             return image
-    """
-    Form personalizzato per la modifica di un utente esistente.
-    Estende UserChangeForm di Django. Questo form è ideale per l'admin o per la modifica del profilo utente.
-    """
+
     class Meta:
         model = StandardUser
 
         fields = (
             'username',
-            'password',
+
             'email',
             'first_name',
             'last_name',
             'height', 'weight', 'biogender', 'birth_date', 'profile_picture',
+            'is_coach',
         )
         labels = {
             'height': 'Altezza (cm)',
@@ -78,21 +81,9 @@ class StandardUserChangeForm(UserChangeForm):
             'biogender': 'Sesso Biologico',
             'birth_date': 'Data di Nascita',
             'profile_picture': 'Immagine del Profilo',
-            'is_coach': 'È Coach?',
+            'is_coach': 'Sono un Coach',
         }
         widgets = {
             'birth_date': forms.DateInput(attrs={'type': 'date'}),
         }
 
-
-class AdminUserChangeForm(UserChangeForm):
-    """Form for administrators to edit user profiles"""
-    class Meta:
-        model = StandardUser
-        fields = (
-            'username', 'email', 'first_name', 'last_name',
-            'is_active', 'is_staff', 'is_superuser',
-            'height', 'weight', 'biogender', 'birth_date', 
-            'profile_picture', 'is_coach',
-            'groups', 'user_permissions',
-        )

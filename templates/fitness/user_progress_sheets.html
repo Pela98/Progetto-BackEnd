@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <h2>{{ title }}</h2>
+        {# Messaggio dinamico in base all'utente target #}
+        {% if is_own_sheet %}
+            <p class="sheet-info">Gestisci qui le **tue** schede di progresso.</p>
+        {% else %}
+            <p class="sheet-info">Stai visualizzando le schede di progresso di **{{ target_user.username }}**.</p>
+        {% endif %}
+
+        {% if progress_sheets %}
+            <div class="progress-sheet-list">
+                {% for sheet in progress_sheets %}
+                    <div class="sheet-item">
+                        <h4>Scheda Anno: {{ sheet.year }}</h4>
+                        {# Link al dettaglio della scheda #}
+                        <a href="{% url 'progress_sheet_detail' pk=sheet.pk %}" class="btn btn-info btn-sm">
+                            Vedi Dettagli Scheda
+                        </a>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p>Nessuna scheda di progresso trovata.</p>
+        {% endif %}
+
+        {# Torna alla lista utenti se il coach sta vedendo un altro utente, altrimenti torna alla home #}
+        {% if not is_own_sheet %}
+            <p class="back-link"><a href="{% url 'user_list' %}">Torna all'Elenco Utenti</a></p>
+        {% else %}
+            <p class="back-link"><a href="{% url 'home' %}">Torna alla Home</a></p>
+        {% endif %}
+    </div>
+
+    <style>
+        /* ... I tuoi stili CSS esistenti ... */
+        .btn-info.btn-sm { /* Assicurati che questo stile esista */
+            background-color: #17a2b8;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 4px;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+            font-size: 0.9em;
+            display: inline-block;
+            margin-top: 10px;
+        }
+        .btn-info.btn-sm:hover {
+            background-color: #138496;
+        }
+    </style>
+{% endblock %}

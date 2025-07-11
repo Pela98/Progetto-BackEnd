@@ -14,7 +14,7 @@ feedback on accounts’ progress.
 
 #\scelte
 
-#validatore licenza
+#validatore licenza //DEPRECATO
 def is_valid_license(license_number):
     if not license_number:
         raise ValueError("License number is required to validate")

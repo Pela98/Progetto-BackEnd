@@ -66,18 +66,69 @@
     </style>
 </head>
 <body>
-    <div class="content">
-        {% if user.is_authenticate %}
+
+<div class="button-container" style="flex-direction: row">
+
+
+    <h3>I Tuoi Obiettivi Attivi</h3>
+        {% if request.user.is_authenticated %}
+            {% if uncompleted_goals %}
+                <ul>
+                    {% for goal in uncompleted_goals %}
+                        <li>
+                            {# Il link per completare il goal #}
+                            <form action="{% url 'mark_goal_achieved' pk=goal.pk %}" method="post" style="display:inline-block; width: 100%;">
+                            {% csrf_token %} {# Molto importante per la sicurezza CSRF #}
+
+                            <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                                    <strong>{{ goal.name }}</strong>
+                                    {% if goal.target_weight %}
+                                        <small style="display: block;">Target: {{ goal.target_weight }} kg</small>
+                                    {% endif %}
+                            </div>
+                            </form>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>Nessun obiettivo attivo.</p>
+                {# Puoi aggiungere un link per creare un goal qui #}
+                <a href="{% url 'goal_create_update' %}" style="color: yellow; text-decoration: underline;">Imposta un Goal!</a>
+            {% endif %}
+        {% else %}
+            <p>Accedi per vedere i tuoi obiettivi.</p>
+        {% endif %}
+    <a href="{% url 'home' %}" class="btn">Home</a>
+     <h3>I Tuoi Obiettivi Raggiunti</h3>
+        {% if request.user.is_authenticated %}
+            {% if achieved_goals %}
+                <ul>
+                    {% for goal in achieved_goals %}
+                        <li>
+                           {{ goal.name }}
+                            {% if goal.date %}
+                                <small>Il {{ goal.date|date:"d M Y" }}</small>
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                </ul>
+
+            {% else %}
+                <p>Ancora nessun obiettivo raggiunto.</p>
+            {% endif %}
+        {% else %}
+            <p>Accedi per vedere i tuoi achievement.</p>
         {% endif %}
     </div>
+
     <div class="content">
         {% block content %}
-
         {% endblock %}
     </div>
 
     <footer>
         <p>&copy; unifi matricola:7006444. Tutti i diritti riservati.</p>
     </footer>
+
 </body>
 </html>

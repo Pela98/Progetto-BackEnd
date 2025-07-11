@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <h2>{{ title }}</h2>
+        <p class="sheet-info">Anno della Scheda: <strong>{{ progress_sheet.year }}</strong></p>
+        <p class="sheet-info">Obiettivo: <strong>{{ progress_sheet.goal }}</strong></p>
+
+        {# Mostra il bottone "Aggiungi Nuovo Workout" solo se l'utente loggato è il proprietario della scheda #}
+        {% if can_add_workout %}
+            <a href="{% url 'workout_create' %}" class="btn btn-success add-workout-btn">Aggiungi Nuovo Workout</a>
+        {% endif %}
+
+        {% if workouts_with_feedback %}
+            <div class="workouts-list">
+                <h3>Workout Registrati</h3>
+
+                {% for item in workouts_with_feedback %}
+                    <div class="workout-item">
+                        <h4>{{ item.workout.date|date:"d M Y" }} - {{ item.workout.calories_burned }} kcals</h4>
+
+                        {% if item.workout.description %}
+                            <p>Descrizione Workout: {{ item.workout.description }}</p>
+                        {% endif %}
+
+                        <div class="feedback-section">
+                            {% if item.feedback %}
+                                <p class="feedback-comment">Feedback: {{ item.feedback.comment }}</p>
+                                {# Bottone per Modificare Feedback - Visibile solo ai coach #}
+                                {% if request.user.is_coach %}
+                                    <a href="{% url 'feedback_create_update' workout_pk=item.workout.pk %}" class="btn btn-warning btn-sm">Modifica Feedback</a>
+                                {% endif %}
+                            {% else %}
+                                <p class="no-feedback">Nessun feedback per questo workout.</p>
+                                {# Bottone per Aggiungere Feedback - Visibile solo ai coach #}
+                                {% if request.user.is_coach %}
+                                    <a href="{% url 'feedback_create_update' workout_pk=item.workout.pk %}" class="btn btn-primary btn-sm">Lascia Feedback</a>
+                                {% endif %}
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p>Nessun workout registrato per questa scheda. Inizia ad aggiungerne!</p>
+        {% endif %}
+
+        {# Bottone per tornare alla lista delle schede appropriata #}
+        {% if request.user.is_coach and request.user != sheet_owner %}
+            <p class="back-link"><a href="{% url 'view_user_progress_sheets' user_pk=sheet_owner.pk %}">Torna alle Schede Progressi di {{ sheet_owner.username }}</a></p>
+        {% else %}
+            <p class="back-link"><a href="{% url 'view_my_progress_sheets' %}">Torna alle Tue Schede Progressi</a></p>
+        {% endif %}
+    </div>
+
+    <style>
+        /* ... I tuoi stili CSS esistenti ... */
+
+        /* Stili per il bottone Modifica Feedback */
+        .btn-warning.btn-sm {
+            background-color: #ffc107;
+            color: #343a40; /* Testo scuro per un buon contrasto */
+            padding: 8px 12px;
+            border-radius: 4px;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+            font-size: 0.9em;
+            display: inline-block;
+            margin-top: 5px; /* Poco spazio sotto il feedback */
+            margin-left: 5px; /* Spazio a sinistra per differenziare */
+        }
+        .btn-warning.btn-sm:hover {
+            background-color: #e0a800;
+        }
+        /* Assicurati che .btn-primary.btn-sm abbia uno stile appropriato per "Lascia Feedback" */
+        .btn-primary.btn-sm {
+            background-color: #007bff;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 4px;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+            font-size: 0.9em;
+            display: inline-block;
+            margin-top: 5px;
+        }
+        .btn-primary.btn-sm:hover {
+            background-color: #0056b3;
+        }
+    </style>
+{% endblock %}
