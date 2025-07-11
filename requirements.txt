@@ -7,7 +7,6 @@ Django==5.2.1
 django-bootstrap5==25.1
 django-crispy-forms==2.4
 django-faker==0.2
-Faker==37.4.0
 gunicorn==23.0.0
 h11==0.14.0
 marshmallow==3.26.1

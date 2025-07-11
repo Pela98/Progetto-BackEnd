@@ -1,8 +1,6 @@
-from .models import Goal  # Importa il tuo modello Goal
+from .models import Goal
 
 
-# Assicurati che AUTH_USER_MODEL sia importato se necessario per altri scopi qui,
-# ma per filtrare per request.user non è strettamente richiesto.
 
 def uncompleted_goals_processor(request):
     """
