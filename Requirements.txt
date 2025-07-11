@@ -1,3 +1,0 @@
-lista requisiti:
-Python3
-Django 5.2.1
