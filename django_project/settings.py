@@ -24,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-zw38_1a+ow_&s=jw-n+q(k=r7p630a_pl_-#9qxo37+30yqnp3'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ["progetto-backend-production.up.railway.app", ".railway.app"]
 
@@ -137,3 +137,5 @@ LOGIN_REDIRECT_URL = 'home'
 AUTH_USER_MODEL = 'accounts.StandardUser'
 
 CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
