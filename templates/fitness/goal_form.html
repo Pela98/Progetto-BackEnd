@@ -1,10 +1,125 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'base.html' %}
 
-</body>
-</html>
+{% block title %}
+    {% if form.instance.pk %}Modifica Obiettivo{% else %}Crea Nuovo Obiettivo{% endif %}
+{% endblock %}
+
+{% block content %}
+    <div class="form-container">
+        <h2>
+            {% if form.instance.pk %}Modifica il tuo Obiettivo{% else %}Crea un Nuovo Obiettivo{% endif %}
+        </h2>
+        <form method="post">
+            {% csrf_token %}
+            
+            {# Mostra gli errori non specifici di un campo #}
+            {% if form.non_field_errors %}
+                <div class="error-messages">
+                    {% for error in form.non_field_errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            {# Cicla su tutti i campi del form per renderizzarli #}
+            {% for field in form %}
+                <div class="form-group">
+                    {{ field.label_tag }} {# Etichetta del campo #}
+                    {{ field }} {# Input del campo #}
+                    
+                    {% if field.help_text %}
+                        <small class="help-text">{{ field.help_text }}</small>
+                    {% endif %}
+                    
+                    {% if field.errors %}
+                        <div class="field-errors">
+                            {% for error in field.errors %}
+                                <p>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+
+            <button type="submit" class="btn btn-success">
+                {% if form.instance.pk %}Salva Modifiche{% else %}Crea Obiettivo{% endif %}
+            </button>
+        </form>
+    </div>
+
+    {# Puoi aggiungere un link per tornare indietro se lo desideri #}
+    <p class="go-back-link"><a href="{% url 'home' %}">Torna alla Home</a></p>
+
+    <style>
+        /* Stili per il form, simili a quelli usati per registrazione/login */
+        .form-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px; /* Larghezza massima del form */
+            margin-top: 20px;
+            text-align: left;
+        }
+        .form-container h2 {
+            text-align: center;
+            color: #007bff;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .form-group input[type="text"],
+        .form-group input[type="number"],
+        .form-group textarea { /* Applica stili anche alla textarea */
+            width: calc(100% - 16px);
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .form-group textarea {
+            resize: vertical; /* Permette il ridimensionamento verticale della textarea */
+        }
+        .help-text {
+            font-size: 0.8em;
+            color: #666;
+            margin-top: 3px;
+            display: block;
+        }
+        .field-errors {
+            color: #dc3545;
+            font-size: 0.8em;
+            margin-top: 3px;
+        }
+        .error-messages {
+            color: #dc3545;
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            padding: 8px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        .go-back-link {
+            margin-top: 15px;
+            font-size: 0.9em;
+            color: #555;
+            text-align: center;
+        }
+        .go-back-link a {
+            color: #007bff;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .go-back-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+{% endblock %}

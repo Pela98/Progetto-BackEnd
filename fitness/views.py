@@ -1,5 +1,5 @@
 #fitness/views.py
-from django.views.generic import UpdateView
+from django.views.generic import UpdateView, ListView, DetailView
 # --- Mixin per Admin ---
 
 
@@ -86,3 +86,37 @@ class GoalCreateUpdateView(LoginRequiredMixin, UpdateView):
         goal.pk = self.request.user.pk  # Imposta la PK del Goal all'ID dell'utente (per la relazione OneToOne)
         goal.save()  # Ora salva l'istanza del Goal nel database
         return super().form_valid(form)
+
+    # --- Viste per User Visualization ---
+
+class UserProgressSheetListView(LoginRequiredMixin, ListView):
+    model = ProgressSheet
+    template_name = 'fitness/user_progress_sheets.html'
+    context_object_name = 'progress_sheets'
+
+    def get_queryset(self):
+        current_year = datetime.date.today().year
+        # Assicurati che la progress sheet dell'anno corrente esista per l'utente
+        ProgressSheet.get_or_create_for_user_and_year(self.request.user, current_year)
+        # Poi, recupera tutte le progress sheet dell'utente loggato
+        return ProgressSheet.objects.filter(user=self.request.user).order_by('-year')
+
+class ProgressSheetDetailView(LoginRequiredMixin, DetailView):
+    """
+    Vista per visualizzare i dettagli di una specifica ProgressSheet e tutti i suoi Workout.
+    """
+    model = ProgressSheet
+    template_name = 'fitness/progress_sheet_detail.html'  # Questo sarà il nostro template
+    context_object_name = 'progress_sheet'
+
+    def get_queryset(self):
+        # Assicurati che l'utente possa vedere solo le PROPRIE progress sheet.
+        # Questo previene che un utente acceda alle schede di altri modificando l'ID nell'URL.
+        return ProgressSheet.objects.filter(user=self.request.user)
+
+    def get_context_data(self, **kwargs):
+        # Aggiunge i workout associati a questa ProgressSheet al contesto.
+        context = super().get_context_data(**kwargs)
+        context['workouts'] = self.object.workout_set.all().order_by('-date')
+        context['title'] = f"Workouts di {self.object.year}"
+        return context

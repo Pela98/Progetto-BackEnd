@@ -22,7 +22,7 @@ class Goal(models.Model):
         return self.name
     # quando un goal viene completato allora viene distrutto il record e viene creato
     def achieve(self):
-        achievement = Achievement.objects.create(name=self.name, description=self.description, target_weight=self.target_weight, target_bmi=self.target_bmi, user=self.user, is_achieved=True)
+        achievement = Achievement.objects.create(name=self.name, description=self.description, target_weight=self.target_weight, target_bmi=self.target_bmi, user=self.user, is_achieved=True, date=datetime.date.today())
         achievement.save()
         self.delete()
         return achievement
@@ -34,10 +34,11 @@ class Goal(models.Model):
 
 # quando un Goal è completato diventa un achievement
 class Achievement(Goal):
+    date = models.DateField(validators=[MinValueValidator(datetime.date.today() - datetime.timedelta(days=366)),])
     class Meta:
         verbose_name_plural = "achievements"
         verbose_name = "achievement"
-        order_with_respect_to = 'user'
+        order_with_respect_to = 'date'
 def days_in_this_year():
     if datetime.date.today().year % 4 == 0:
         return 366
