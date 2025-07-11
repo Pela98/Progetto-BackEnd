@@ -1,0 +1,123 @@
+{# fitness/user_specific_goals_list.html #}
+{% extends 'base.html' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <h1>Obiettivi di {{ viewed_user.username }}</h1>
+
+        {% if goals %}
+            <div class="goals-container">
+                {% for goal in goals %}
+                    <div class="goal-card">
+                        {# Mostra il bottone solo se l'obiettivo NON è raggiunto #}
+                        {% if not goal.is_achieved %}
+                            <form method="post" action="{% url 'achieve_goal' pk=goal.pk %}">
+                                {% csrf_token %}
+                                <button type="submit" class="achieve-button">Segna come Raggiunto</button>
+                            </form>
+                        {% endif %}
+                        <h2>{{ goal.name }}</h2>
+                        <p>{{ goal.description }}</p>
+                        <span class="goal-status {% if goal.is_achieved %}status-achieved{% else %}status-unachieved{% endif %}">
+                            {% if goal.is_achieved %}
+                                Raggiunto!
+                            {% else %}
+                                Non Raggiunto
+                            {% endif %}
+                        </span>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="no-goals">Nessun obiettivo trovato per {{ viewed_user.username }}.</p>
+        {% endif %}
+
+        <p class="back-link"><a href="{% url 'user_list' %}">Torna alla Lista Utenti</a></p>
+    </div>
+
+    <style>
+        /* Includi qui gli stili per .goals-container, .goal-card, .goal-status, .achieve-button, .no-goals, ecc.
+           che hai già definito per le liste di obiettivi. Oppure includili nel tuo CSS globale. */
+           .goals-container {
+            display: flex;
+            flex-wrap: wrap; /* Permette ai goal di andare a capo su più righe */
+            gap: 20px; /* Spazio tra i contenitori dei goal */
+            justify-content: center; /* Centra i goal nel contenitore */
+            padding: 20px;
+            max-width: 1200px; /* Larghezza massima per il contenitore principale */
+            margin: 0 auto; /* Centra il contenitore principale */
+        }
+
+        .goal-card {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 300px; /* Larghezza fissa per ogni card di obiettivo */
+            box-sizing: border-box; /* Include padding e border nella larghezza */
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between; /* Spinge il contenuto e lo stato */
+        }
+
+        .goal-card h2 {
+            color: #007bff;
+            margin-top: 0;
+            font-size: 1.5em;
+            margin-bottom: 10px;
+        }
+
+        .goal-card p {
+            color: #555;
+            font-size: 0.9em;
+            margin-bottom: 15px;
+            flex-grow: 1; /* Permette alla descrizione di occupare spazio */
+        }
+
+        .goal-status {
+            font-weight: bold;
+            padding: 5px 10px;
+            border-radius: 4px;
+            display: inline-block; /* Per allineare meglio lo stato */
+        }
+
+        .status-achieved {
+            background-color: #d4edda; /* Verde chiaro */
+            color: #155724; /* Verde scuro */
+        }
+
+        .status-unachieved {
+            background-color: #f8d7da; /* Rosso chiaro */
+            color: #721c24; /* Rosso scuro */
+        }
+
+        .no-goals {
+            text-align: center;
+            font-size: 1.2em;
+            color: #777;
+            padding: 50px;
+        }
+
+        .achieve-button {
+            background-color: #28a745; /* Verde per il bottone */
+            color: white;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+            margin-top: 10px; /* Spazio sopra il bottone */
+            width: 100%; /* Rende il bottone della stessa larghezza della card */
+            box-sizing: border-box;
+            transition: background-color 0.3s ease;
+        }
+
+        .achieve-button:hover {
+            background-color: #218838;
+        }
+    </style>
+{% endblock %}

@@ -29,6 +29,7 @@ urlpatterns = [
 
 
 
+
     path('my-accounts/', include('accounts.urls')),
     path('fitness/', include('fitness.urls')),
 ]

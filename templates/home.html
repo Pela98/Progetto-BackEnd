@@ -15,10 +15,11 @@
         {% endif %}
         {% if user.is_authenticated %}
             <a href="{% url 'profile_edit' %}" class="btn">Cambia Parametri</a>
-            <a href="{% url 'goal_update' %}" class="btn">Inserisci Obiettivo</a>
+            <a href="{% url 'goal_create' %}" class="btn">Inserisci Obiettivo</a>
             <a href="{% url 'workout_create' %}" class="btn">Inserisci Workout</a>
             <a href="{% url 'user_progress_sheets' %}" class="btn">Scheda Progressioni</a>
-
+            <a href="{% url 'achieved_goals_list' %}" class="btn">Obiettivi Raggiunti</a>
+            <a href="{% url 'unachieved_goals_list' %}" class="btn">Obiettivi Da Completare</a>
             <form action="{% url 'logout' %}" method="post">
             {% csrf_token %}
             <button type="submit">Esci</button>

@@ -17,7 +17,7 @@
                         {% endif %}
                         <p>Coach: {% if user_obj.is_coach %}Sì{% else %}No{% endif %}</p>
                         <p>Ultimo Login: {{ user_obj.last_login|date:"d M Y H:i" }}</p>
-                        
+                        <a href="{% url 'view_user_goals' user_pk=user_obj.pk %}" class="btn btn-info btn-sm">Visualizza Obiettivi</a>
                         <a href="{% url 'view_user_progress_sheets' user_pk=user_obj.pk %}" class="btn btn-primary btn-sm">Visualizza Progressioni</a>
                     </div>
                 {% endfor %}
