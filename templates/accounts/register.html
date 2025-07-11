@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+    <div class="form-container">
+        <h2>{{ title }}</h2>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            {# Questo ciclo mostra tutti i campi del form, incluse le password #}
+            {% for field in form %}
+                <div class="form-group">
+                    {{ field.label_tag }}
+                    {{ field }}
+                    {% if field.help_text %}
+                        <small class="help-text">{{ field.help_text }}</small>
+                    {% endif %}
+                    {% if field.errors %}
+                        <div class="field-errors">
+                            {% for error in field.errors %}
+                                <p>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+
+            {# Qui verranno mostrati gli errori non specifici di un campo (es. password non corrispondenti) #}
+            {% if form.non_field_errors %}
+                <div class="error-messages">
+                    {% for error in form.non_field_errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <button type="submit" class="btn btn-success">Registrati</button>
+        </form>
+    </div>
+
+    <p class="login-link">Hai già un account? <a href="{% url 'login' %}">Accedi qui</a></p>
+
+    <style>
+        /* Stili minimi per il form */
+        .form-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px; /* Larghezza contenuta */
+            margin-top: 20px;
+            text-align: left;
+        }
+        .form-container h2 {
+            text-align: center;
+            color: #007bff;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 10px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 3px;
+            font-weight: bold;
+        }
+        .form-group input[type="text"],
+        .form-group input[type="email"],
+        .form-group input[type="password"],
+        .form-group input[type="number"],
+        .form-group input[type="date"],
+        .form-group select,
+        .form-group input[type="file"] {
+            width: calc(100% - 16px); /* Per un po' di padding */
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .help-text {
+            font-size: 0.8em;
+            color: #666;
+            margin-top: 3px;
+            display: block;
+        }
+        .field-errors {
+            color: #dc3545;
+            font-size: 0.8em;
+            margin-top: 3px;
+        }
+        .error-messages {
+            color: #dc3545;
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            padding: 8px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        .login-link {
+            margin-top: 15px;
+            font-size: 0.9em;
+            color: #555;
+            text-align: center; /* Centra il link */
+        }
+        .login-link a {
+            color: #007bff;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+{% endblock %}

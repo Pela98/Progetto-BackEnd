@@ -1,3 +1,88 @@
-from django.shortcuts import render
+#fitness/views.py
+from django.views.generic import UpdateView
+# --- Mixin per Admin ---
 
-# Create your views here.
+
+
+# --- Viste per Workout ---
+
+# fitness/views.py
+
+from django.views.generic.edit import CreateView
+from django.urls import reverse_lazy
+from django.contrib.auth.mixins import LoginRequiredMixin
+from .models import Workout, ProgressSheet, Goal
+from .forms import WorkoutForm, GoalForm
+import datetime
+
+class WorkoutCreateView(LoginRequiredMixin, CreateView):
+    """
+    Vista per permettere agli StandardUser di creare un nuovo workout.
+    Associa automaticamente il workout alla ProgressSheet dell'anno corrente dell'utente.
+    """
+    model = Workout
+    form_class = WorkoutForm
+    template_name = 'fitness/workout_form.html'  # Creeremo questo template
+    success_url = reverse_lazy('home')  # URL di successo dopo la creazione
+
+    def form_valid(self, form):
+        """
+        Questo metodo viene chiamato quando il form è valido.
+        Qui associamo il workout alla ProgressSheet corretta.
+        """
+        # Ottieni l'utente loggato
+        user = self.request.user
+
+        # Ottieni l'anno corrente
+        current_year = datetime.date.today().year
+
+        # Cerca o crea la ProgressSheet per l'utente e l'anno corrente
+        # get_or_create restituisce l'oggetto e un booleano (creato o meno)
+        progress_sheet, created = ProgressSheet.objects.get_or_create(
+            user=user,
+            year=current_year
+        )
+        if created:
+            print(f"Created new ProgressSheet for user {user.username} for year {current_year}")
+
+        # Associa la ProgressSheet al workout prima di salvarlo
+        workout = form.save(commit=False) # Non salvare ancora nel database
+        workout.progress_sheet = progress_sheet
+        workout.save() # Ora salva l'istanza del workout
+
+        return super().form_valid(form)
+
+
+class GoalCreateUpdateView(LoginRequiredMixin, UpdateView):
+    """
+    Vista per permettere agli StandardUser di creare o aggiornare il proprio Goal.
+    Poiché Goal ha una relazione OneToOne con l'utente e usa l'utente come PK,
+    questa vista gestisce sia la creazione che la modifica per l'utente loggato.
+    """
+    model = Goal
+    form_class = GoalForm
+    template_name = 'fitness/goal_form.html'  # Creeremo questo template
+    success_url = reverse_lazy('home')  # URL di successo dopo la creazione/modifica
+
+    def get_object(self, queryset=None):
+        """
+        Recupera il Goal esistente per l'utente corrente, o restituisce None se non esiste.
+        Questo metodo è fondamentale per la UpdateView per sapere quale oggetto modificare.
+        """
+        # Cerchiamo un Goal che abbia come primary key (PK) l'ID dell'utente corrente.
+        # Poiché user è OneToOneField e primary_key=True, l'ID del Goal è l'ID dell'utente.
+        try:
+            return Goal.objects.get(pk=self.request.user.pk)
+        except Goal.DoesNotExist:
+            return None  # Nessun goal esistente, quindi lo creeremo
+
+    def form_valid(self, form):
+        """
+        Questo metodo viene chiamato quando il form è valido.
+        Qui associamo il Goal all'utente corrente prima del salvataggio.
+        """
+        goal = form.save(commit=False)
+        goal.user = self.request.user  # Associa il Goal all'utente loggato
+        goal.pk = self.request.user.pk  # Imposta la PK del Goal all'ID dell'utente (per la relazione OneToOne)
+        goal.save()  # Ora salva l'istanza del Goal nel database
+        return super().form_valid(form)

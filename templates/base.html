@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Homepage</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        .centered{
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .button-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            gap: 15px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .btn {
+            display: block;
+            padding: 12px 25px;
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+            text-decoration: none;
+            color: #fff;
+            background-color: #007bff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            width: 250px; /* Imposta una larghezza fissa per i bottoni */
+        }
+        .btn:hover {
+            background-color: #0056b3;
+        }
+        .btn-admin {
+            background-color: #28a745; /* Colore diverso per il bottone admin */
+        }
+        .btn-admin:hover {
+            background-color: #218838;
+        }
+        h1 {
+            display: flex;
+            justify-content: center;
+            color: #007bff;
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="content">
+        {% block content %}
+
+        {% endblock %}
+    </div>
+
+    <footer>
+        <p>&copy; unifi matricola:7006444. Tutti i diritti riservati.</p>
+    </footer>
+</body>
+</html>

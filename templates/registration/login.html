@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+
+{% block title %}Accedi a FitnessTracker{% endblock %}
+
+{% block content %}
+    <div class="form-container">
+        <h2>Accedi</h2>
+        <form method="post">
+            {% csrf_token %}
+
+            {# Questo ciclo mostra i campi username e password #}
+            {% for field in form %}
+                <div class="form-group">
+                    {{ field.label_tag }}
+                    {{ field }}
+                    {% if field.errors %}
+                        <div class="field-errors">
+                            {% for error in field.errors %}
+                                <p>{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+
+            {# Qui verranno mostrati gli errori non specifici di un campo (es. credenziali errate) #}
+            {% if form.non_field_errors %}
+                <div class="error-messages">
+                    {% for error in form.non_field_errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <button type="submit" class="btn">Accedi</button>
+        </form>
+    </div>
+
+    <p class="register-link">Non hai un account? <a href="{% url 'register' %}">Registrati qui</a></p>
+
+    <style>
+        /* Stili riutilizzati dalla registrazione per coerenza */
+        .form-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            margin-top: 20px;
+            text-align: left;
+        }
+        .form-container h2 {
+            text-align: center;
+            color: #007bff;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 10px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 3px;
+            font-weight: bold;
+        }
+        .form-group input[type="text"],
+        .form-group input[type="password"] {
+            width: calc(100% - 16px);
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .field-errors {
+            color: #dc3545;
+            font-size: 0.8em;
+            margin-top: 3px;
+        }
+        .error-messages {
+            color: #dc3545;
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            padding: 8px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        .register-link {
+            margin-top: 15px;
+            font-size: 0.9em;
+            color: #555;
+            text-align: center;
+        }
+        .register-link a {
+            color: #007bff;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .register-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+{% endblock %}
