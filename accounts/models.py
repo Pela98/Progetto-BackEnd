@@ -4,12 +4,7 @@ from django.contrib.auth.base_user import BaseUserManager
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-"""
-Define two roles with distinct abilities: Standard User that can log, edit, and delete their own workouts
-and progress entries and can set, update, and complete their own goals. Coach with all
-Standard User permissions, plus view workouts/goals across all accounts. Provide comments or
-feedback on accounts’ progress.
-"""
+
 #scelte
 
 #\scelte
